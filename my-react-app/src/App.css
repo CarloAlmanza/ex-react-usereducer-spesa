@@ -20,6 +20,23 @@
   color: #2a7;
 }
 
+.cart-total {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 2px solid #ccc;
+  text-align: right;
+  font-size: 1.1rem;
+}
+
+.cart-item button {
+  background: #ffe5e5;
+  border: 1px solid #f99;
+  color: #c33;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
 button {
   cursor: pointer;
   padding: 4px 10px;

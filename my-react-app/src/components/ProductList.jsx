@@ -5,18 +5,35 @@ import Cart from './Cart';
 function ProductList() {
     const [addedProducts, setAddedProducts] = useState([]);
 
+    // Aggiunge il prodotto o incrementa la quantità
     function addToCart(product) {
-        // Controllo se il prodotto è già nel carrello
         const alreadyInCart = addedProducts.some(
             (item) => item.name === product.name
         );
 
         if (alreadyInCart) {
-            return; // ignora l'azione
+            updateProductQuantity(product.name);
+        } else {
+            setAddedProducts([...addedProducts, { ...product, quantity: 1 }]);
         }
+    }
 
-        // Aggiungo il prodotto con quantity = 1
-        setAddedProducts([...addedProducts, { ...product, quantity: 1 }]);
+    //Incrementa la quantità di un prodotto esistente
+    function updateProductQuantity(productName) {
+        setAddedProducts(
+            addedProducts.map((item) =>
+                item.name === productName
+                    ? { ...item, quantity: item.quantity + 1 }
+                    : item
+            )
+        );
+    }
+
+    //Rimuove un prodotto dal carrello
+    function removeFromCart(productName) {
+        setAddedProducts(
+            addedProducts.filter((item) => item.name !== productName)
+        );
     }
 
     return (
@@ -34,7 +51,10 @@ function ProductList() {
                 ))}
             </ul>
 
-            <Cart addedProducts={addedProducts} />
+            <Cart
+                addedProducts={addedProducts}
+                onRemove={removeFromCart}
+            />
         </div>
     );
 }
