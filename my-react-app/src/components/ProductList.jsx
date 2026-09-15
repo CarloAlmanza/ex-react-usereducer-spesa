@@ -5,34 +5,42 @@ import Cart from './Cart';
 function ProductList() {
     const [addedProducts, setAddedProducts] = useState([]);
 
-    // Aggiunge il prodotto o incrementa la quantità
+    // Aggiunge o incrementa
     function addToCart(product) {
-        const alreadyInCart = addedProducts.some(
-            (item) => item.name === product.name
-        );
+        const existing = addedProducts.find(item => item.name === product.name);
 
-        if (alreadyInCart) {
-            updateProductQuantity(product.name);
+        if (existing) {
+            updateProductQuantity(product.name, existing.quantity + 1);
         } else {
             setAddedProducts([...addedProducts, { ...product, quantity: 1 }]);
         }
     }
 
-    //Incrementa la quantità di un prodotto esistente
-    function updateProductQuantity(productName) {
+    //Imposta la quantità di un prodotto (con validazione)
+    function updateProductQuantity(productName, newQuantity) {
+        // 1. Forza intero (via parseInt, scarta decimali)
+        let qty = parseInt(newQuantity, 10);
+
+        // 2. Se non è un numero valido (es. input svuotato), ignora
+        if (isNaN(qty)) return;
+
+        // 3. Non permettere valori < 1
+        if (qty < 1) qty = 1;
+
+        // 4. Aggiorna lo stato in modo immutabile
         setAddedProducts(
-            addedProducts.map((item) =>
+            addedProducts.map(item =>
                 item.name === productName
-                    ? { ...item, quantity: item.quantity + 1 }
+                    ? { ...item, quantity: qty }
                     : item
             )
         );
     }
 
-    //Rimuove un prodotto dal carrello
+    //Rimuove un prodotto
     function removeFromCart(productName) {
         setAddedProducts(
-            addedProducts.filter((item) => item.name !== productName)
+            addedProducts.filter(item => item.name !== productName)
         );
     }
 
@@ -40,7 +48,7 @@ function ProductList() {
         <div className="product-list">
             <h2>Lista Prodotti</h2>
             <ul>
-                {products.map((product) => (
+                {products.map(product => (
                     <li key={product.name} className="product-item">
                         <span className="product-name">{product.name}</span>
                         <span className="product-price">€ {product.price.toFixed(2)}</span>
@@ -54,6 +62,7 @@ function ProductList() {
             <Cart
                 addedProducts={addedProducts}
                 onRemove={removeFromCart}
+                onUpdateQuantity={updateProductQuantity}
             />
         </div>
     );
