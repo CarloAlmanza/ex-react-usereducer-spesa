@@ -12,7 +12,7 @@ function Cart({ addedProducts, onRemove, onUpdateQuantity }) {
         <div className="cart">
             <h2>🛒 Carrello</h2>
             <ul>
-                {addedProducts.map(item => (
+                {addedProducts.map((item) => (
                     <li key={item.name} className="cart-item">
                         <span className="cart-name">{item.name}</span>
                         <span className="cart-price">€ {item.price.toFixed(2)}</span>

@@ -1,54 +1,37 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
 import { products } from '../data/products';
+import { cartReducer, initialState } from '../reducers/cartReducer';
 import Cart from './Cart';
 
 function ProductList() {
-    const [addedProducts, setAddedProducts] = useState([]);
+    const [addedProducts, dispatch] = useReducer(cartReducer, initialState);
 
-    // Aggiunge o incrementa
+    //Dispatch di ADD_ITEM
     function addToCart(product) {
-        const existing = addedProducts.find(item => item.name === product.name);
-
-        if (existing) {
-            updateProductQuantity(product.name, existing.quantity + 1);
-        } else {
-            setAddedProducts([...addedProducts, { ...product, quantity: 1 }]);
-        }
+        dispatch({ type: 'ADD_ITEM', payload: product });
     }
 
-    //Imposta la quantità di un prodotto (con validazione)
+    //Dispatch di UPDATE_QUANTITY
     function updateProductQuantity(productName, newQuantity) {
-        // 1. Forza intero (via parseInt, scarta decimali)
-        let qty = parseInt(newQuantity, 10);
-
-        // 2. Se non è un numero valido (es. input svuotato), ignora
-        if (isNaN(qty)) return;
-
-        // 3. Non permettere valori < 1
-        if (qty < 1) qty = 1;
-
-        // 4. Aggiorna lo stato in modo immutabile
-        setAddedProducts(
-            addedProducts.map(item =>
-                item.name === productName
-                    ? { ...item, quantity: qty }
-                    : item
-            )
-        );
+        dispatch({
+            type: 'UPDATE_QUANTITY',
+            payload: { name: productName, quantity: newQuantity },
+        });
     }
 
-    //Rimuove un prodotto
+    //Dispatch di REMOVE_ITEM
     function removeFromCart(productName) {
-        setAddedProducts(
-            addedProducts.filter(item => item.name !== productName)
-        );
+        dispatch({
+            type: 'REMOVE_ITEM',
+            payload: { name: productName },
+        });
     }
 
     return (
         <div className="product-list">
             <h2>Lista Prodotti</h2>
             <ul>
-                {products.map(product => (
+                {products.map((product) => (
                     <li key={product.name} className="product-item">
                         <span className="product-name">{product.name}</span>
                         <span className="product-price">€ {product.price.toFixed(2)}</span>
